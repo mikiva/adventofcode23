@@ -1,8 +1,8 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -38,16 +38,26 @@ func parsePart2(lines []string) []string {
 	return newLines
 }
 
-func main() {
-	var filename string
-	flag.StringVar(&filename, "file", "test", "Input filename")
-	flag.Parse()
-	filename = fmt.Sprintf("%s.txt", filename)
+func getInput() ([]string, error) {
+	if len(os.Args) < 2 {
+		return []string{}, fmt.Errorf("provide filename")
+	}
+	filename := fmt.Sprintf("%s.txt", os.Args[1])
 	content, _ := os.ReadFile(filename)
 	str := string(content)
 	lines := strings.Split(str, "\n")
+	return lines, nil
+}
+
+func main() {
+	lines, err := getInput()
+	if err != nil {
+		log.Fatal(err.Error())
+
+	}
 	part1 := parseLines(lines)
 	fmt.Println(part1)
+
 	parsedLines := parsePart2(lines)
 	part2 := parseLines(parsedLines)
 	fmt.Println(part2)
