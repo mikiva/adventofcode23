@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func part1(lines []string) int {
+func parseLines(lines []string) int {
 	sum := 0
 
 	for _, s := range lines {
@@ -25,23 +25,7 @@ func part1(lines []string) int {
 	return sum
 }
 
-func minmax(vals []int) (int, int) {
-	min := vals[0]
-	max := vals[0]
-
-	for _, num := range vals {
-		if num < min {
-			min = num
-		}
-		if num > max {
-			max = num
-		}
-	}
-
-	return min, max
-}
-
-func part2(lines []string) []string {
+func parsePart2(lines []string) []string {
 
 	var newLines []string
 	for _, line := range lines {
@@ -62,10 +46,10 @@ func main() {
 	content, _ := os.ReadFile(filename)
 	str := string(content)
 	lines := strings.Split(str, "\n")
-	sum := part1(lines)
-	fmt.Println(sum)
-	newLines := part2(lines)
-	newSum := part1(newLines)
-	fmt.Println(newSum)
+	part1 := parseLines(lines)
+	fmt.Println(part1)
+	parsedLines := parsePart2(lines)
+	part2 := parseLines(parsedLines)
+	fmt.Println(part2)
 
 }
