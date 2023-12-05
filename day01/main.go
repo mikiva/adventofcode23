@@ -1,9 +1,9 @@
 package main
 
 import (
+	"aoc23/util"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -38,19 +38,8 @@ func parsePart2(lines []string) []string {
 	return newLines
 }
 
-func getInput() ([]string, error) {
-	if len(os.Args) < 2 {
-		return []string{}, fmt.Errorf("provide filename")
-	}
-	filename := fmt.Sprintf("%s.txt", os.Args[1])
-	content, _ := os.ReadFile(filename)
-	str := string(content)
-	lines := strings.Split(str, "\n")
-	return lines, nil
-}
-
 func main() {
-	lines, err := getInput()
+	lines, err := util.GetInputLines()
 	if err != nil {
 		log.Fatal(err.Error())
 
