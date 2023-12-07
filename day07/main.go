@@ -74,9 +74,6 @@ func (card *Card) CalculateStrength() {
 		v = append(v, val)
 	}
 
-	jokers := countOccurence(v, 1)
-	fmt.Println("jokers: ", jokers)
-
 	if slices.Contains(v, 5) {
 		points = FIVE_OF_A_KIND
 	} else if slices.Contains(v, 4) {
@@ -169,8 +166,14 @@ func part1(input []string) {
 	fmt.Println("Part 1: ", sum)
 }
 
+func part2(input []string) {
+	CARD_VALUES["J"] = 1
+	part1(input)
+}
+
 func main() {
 	input, _ := util.GetInputLines()
 	part1(input)
 
+	//part2(input)
 }
