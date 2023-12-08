@@ -101,6 +101,62 @@ func (card *Card) CalculateStrength() {
 	card.Points = points
 	card.Values = cardValues
 }
+func (card *Card) CalculateStrength2() {
+
+	m := make(map[string]int)
+	cardValues := make([]int, 0)
+	jokers := make([]string, 0)
+	for _, c := range card.Hand {
+		s := string(c)
+		v, ok := m[s]
+		if ok {
+			m[s] = v + 1
+		} else {
+			m[s] = 1
+		}
+
+		if s != "J" {
+			cardValues = append(cardValues, CARD_VALUES[s])
+		} else {
+
+			jokers = append(jokers, s)
+		}
+	}
+
+	fmt.Println(jokers)
+
+	v := make([]int, 0)
+	points := 0
+	for _, val := range m {
+		v = append(v, val)
+	}
+	if slices.Contains(v, 5) {
+		points = FIVE_OF_A_KIND
+	} else if slices.Contains(v, 4) {
+		points = FOUR_OF_A_KIND
+	} else if slices.Contains(v, 3) && slices.Contains(v, 2) {
+		points = FULL_HOUSE
+	} else if slices.Contains(v, 3) && !slices.Contains(v, 2) {
+		points = THREE_OF_A_KIND
+	} else if slices.Contains(v, 2) {
+		count := 0
+		for _, two := range v {
+			if two == 2 {
+				count = count + 1
+			}
+		}
+		if count == 2 {
+			points = TWO_PAIR
+		} else {
+			points = ONE_PAIR
+		}
+	} else {
+		points = HIGH_CARD
+	}
+
+	card.Points = points
+	card.Values = cardValues
+}
 
 func createCards(raw []string) []Card {
 
@@ -111,6 +167,20 @@ func createCards(raw []string) []Card {
 		bid, _ := strconv.Atoi(vals[1])
 		card := Card{Hand: vals[0], Bid: bid, Points: 0}
 		card.CalculateStrength()
+		cards = append(cards, card)
+	}
+	return cards
+}
+
+func createCards2(raw []string) []Card {
+
+	cards := make([]Card, 0)
+
+	for _, r := range raw {
+		vals := strings.Split(r, " ")
+		bid, _ := strconv.Atoi(vals[1])
+		card := Card{Hand: vals[0], Bid: bid, Points: 0}
+		card.CalculateStrength2()
 		cards = append(cards, card)
 	}
 	return cards
@@ -161,19 +231,45 @@ func part1(input []string) {
 	sum := 0
 
 	for i, card := range sortedCards {
+
 		sum = sum + card.Bid*(i+1)
 	}
 	fmt.Println("Part 1: ", sum)
 }
 
 func part2(input []string) {
+
 	CARD_VALUES["J"] = 1
-	part1(input)
+	cards := createCards2(input)
+	sortCardsByPoints(cards)
+	samePoints := make(map[int][]Card)
+	for _, card := range cards {
+		samePoints[card.Points] = append(samePoints[card.Points], card)
+	}
+	keys := make([]int, 0)
+	for k := range samePoints {
+		keys = append(keys, k)
+
+	}
+	sort.Ints(keys)
+	sortedCards := make([]Card, 0)
+	for _, v := range keys {
+		newCards := sortCardsByCards(samePoints[v])
+
+		sortedCards = append(sortedCards, newCards...)
+	}
+	sum := 0
+
+	for i, card := range sortedCards {
+
+		sum = sum + card.Bid*(i+1)
+	}
+	fmt.Println("Part 2: ", sum)
 }
 
 func main() {
 	input, _ := util.GetInputLines()
 	part1(input)
 
-	//part2(input)
+	part2(input)
 }
